@@ -36,6 +36,11 @@ public record Day(int number) implements Comparable<Day> {
         return days;
     }
 
+    /** Day 1 to Day 6. */
+    public static List<Day> all() {
+        return through(last());
+    }
+
     public boolean isLast() {
         return number == LAST;
     }

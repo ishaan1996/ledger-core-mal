@@ -110,7 +110,7 @@ public final class EventValidator {
                             + "and the nearest representable parts (%s) are not equal")
                             .formatted(c.amount().currency(), c.amount(), c.instalments(), scale,
                                     c.amount(), c.instalments(),
-                                    new BigDecimal(minor).divide(BigDecimal.valueOf(c.instalments()),
+                                    c.amount().amount().divide(BigDecimal.valueOf(c.instalments()),
                                             scale + 4, RoundingMode.DOWN).toPlainString(),
                                     nearestSplit(qr, c.instalments(), scale))));
         }
