@@ -12,6 +12,7 @@ You need only a JDK (21 or later). There is no build tool, no test framework and
 ```
 bash run.sh    # compile, replay the stream, print the report (exits 1 if any invariant fails)
 bash test.sh   # compile, run 32 tests, then the replay as a smoke test
+bash known-gaps.sh   # a test that FAILS against this design on purpose (see KNOWN_GAPS.md)
 ```
 
 The saved output of the last run is in `out/replay.txt` and `out/test-results.txt`.
@@ -93,4 +94,5 @@ Tests live in `src/test/java/ledger/` (`Harness` and `LedgerTests`).
 | `REJECTED.md` | The refused events (E6, E10) and the refused claims, each with its reasoning |
 | `AMBIGUITIES.md` | Every open point in the brief and how it was resolved, including the decisions the user made |
 | `NUMBERS.md` | Every constant, why it has that value and not half of it, and the output figures to cross-check |
+| `KNOWN_GAPS.md` | A deliberately failing test against this design (GAP-1: a full reversal still costs 0.07 of interest), what it reveals, and the options to close it |
 | `WORKLOG.md` | A timestamped record of the build, including mistakes caught along the way |

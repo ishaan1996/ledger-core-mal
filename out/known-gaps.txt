@@ -1,0 +1,4 @@
+FAIL  GAP-1: a fully reversed debit should leave the customer exactly where they would be without it
+      java.lang.AssertionError: ACC-001 final balance after full reversal vs never-happened: expected <466.03> but was <465.96>
+
+1 tests, 0 passed, 1 failed
