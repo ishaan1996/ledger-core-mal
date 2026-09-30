@@ -42,5 +42,8 @@ interest base on money that was later refunded.
 3. Keep A3 and book a separate `INTEREST_ADJUSTMENT` credit (+0.07) alongside the refunds on D6.
    The "rounded dailies sum exactly to capitalization" invariant would have to include adjustments.
 
-This is not closed yet because it needs a user decision: option 1 overturns an explicit decision,
-and options 2 and 3 change what the interest rule means.
+**Status: accepted as a known gap (user decision, 20:04:51 UTC).** Ishaan chose to leave it
+unfixed and documented. None of the three options is implemented. `known-gaps.sh` is expected to
+keep failing with 466.03 vs 465.96, and would start passing only if one of the options above were
+adopted. Anyone reading the replay should know that ACC-001's final 465.96 includes this 0.07
+shortfall.

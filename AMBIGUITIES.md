@@ -87,7 +87,8 @@ really shows for those days. Result: 0.10 + 0.09 + 0.25 + 0.17 + 0.16 + 0.19 = *
 
 This combines with A3 in a way that under-pays: D2 to D5 still carry fees that were later
 refunded, so the customer earns 0.07 less than if E7 had never happened (1.03 vs 0.96). A
-failing test shows it. See **KNOWN_GAPS.md, GAP-1**.
+failing test shows it. See **KNOWN_GAPS.md, GAP-1**. 🔴 The user chose to keep it as a documented
+known gap rather than change the design.
 
 ### A10 🟠 Round each day, or round the total once?
 **Each day**, because the rule requires the rounded daily accruals to sum exactly to the
