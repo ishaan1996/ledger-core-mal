@@ -1,0 +1,168 @@
+LEDGER REPLAY  window D1..D6
+  ACC-001  AED  opening 0.00
+  ACC-002  BHD  opening 0.000
+
+==================== Day 1 ====================
+-- Events processed
+   E1   POSTED    CREDIT ACC-001 1200.00 AED, booked D1, value D1
+   E2   POSTED    DEBIT ACC-001 950.00 AED, booked D1, value D1
+-- Closing ledger balance (value date <= D1, as known at this close)
+   ACC-001  AED       250.00
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00
+   ACC-002  D1 0.000
+-- Fee assessments booked today
+   none
+-- Authorization states at end of day
+   none
+-- Errors
+   none
+
+==================== Day 2 ====================
+-- Events processed
+   E3   APPROVED  AUTHORIZATION Auth-A ACC-001 hold 200.00 AED, booked D2, value D2
+                  available after hold = ledger 250.00 - active holds 0.00 - hold 200.00 = 50.00 >= 0
+-- Closing ledger balance (value date <= D2, as known at this close)
+   ACC-001  AED       250.00
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00  D2 250.00
+   ACC-002  D1 0.000  D2 0.000
+-- Fee assessments booked today
+   none
+-- Authorization states at end of day
+   Auth-A  ACC-001  hold 200.00  ACTIVE (hold since D2)
+-- Errors
+   none
+
+==================== Day 3 ====================
+-- Events processed
+   E4   POSTED    CREDIT ACC-001 400.00 AED, booked D3, value D3
+-- Closing ledger balance (value date <= D3, as known at this close)
+   ACC-001  AED       650.00
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00  D2 250.00  D3 650.00
+   ACC-002  D1 0.000  D2 0.000  D3 0.000
+-- Fee assessments booked today
+   none
+-- Authorization states at end of day
+   Auth-A  ACC-001  hold 200.00  ACTIVE (hold since D2)
+-- Errors
+   none
+
+==================== Day 4 ====================
+-- Events processed
+   E5   POSTED    SETTLEMENT Auth-A ACC-001 185.00 AED, booked D4, value D4
+   E6   REJECTED  SETTLEMENT Auth-Z ACC-001 180.00 AED, booked D4, value D4
+-- Closing ledger balance (value date <= D4, as known at this close)
+   ACC-001  AED       465.00
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00  D2 250.00  D3 650.00  D4 465.00
+   ACC-002  D1 0.000  D2 0.000  D3 0.000  D4 0.000
+-- Fee assessments booked today
+   none
+-- Authorization states at end of day
+   Auth-A  ACC-001  hold 200.00  SETTLED on D4: 185.00 captured, 15.00 released
+-- Errors
+   E6 REJECTED, nothing posted: SETTLEMENT Auth-Z ACC-001 180.00 AED, booked D4, value D4
+        - UNKNOWN_AUTHORIZATION: no approved authorization Auth-Z precedes this settlement, so there is no hold to capture
+
+==================== Day 5 ====================
+-- Events processed
+   E7   POSTED    DEBIT ACC-001 620.00 AED, booked D5, value D2
+   E8   DECLINED  AUTHORIZATION Auth-B ACC-001 hold 90.00 AED, booked D5, value D5
+                  available after hold = ledger -205.00 - active holds 0.00 - hold 90.00 = -295.00 < 0
+-- Closing ledger balance (value date <= D5, as known at this close)
+   ACC-001  AED      -230.00
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00  D2 -395.00*  D3 5.00*  D4 -205.00*  D5 -230.00
+   ACC-002  D1 0.000  D2 0.000  D3 0.000  D4 0.000  D5 0.000
+-- Fee assessments booked today
+   ACC-001  OVERDRAFT_FEE -25.00 for D2  (D2 closed at -370.00 before this fee, on what was known then; cause E7) #9
+   ACC-001  OVERDRAFT_FEE -25.00 for D4  (D4 closed at -180.00 before this fee, on what was known then; cause E7) #10
+   ACC-001  OVERDRAFT_FEE -25.00 for D5  (D5 closed at -205.00 before this fee, on what was known then; cause close D5) #11
+-- Authorization states at end of day
+   Auth-A  ACC-001  hold 200.00  SETTLED on D4: 185.00 captured, 15.00 released
+   Auth-B  ACC-001  asked 90.00  DECLINED on D5, no hold
+-- Errors
+   none
+
+==================== Day 6 ====================
+-- Events processed
+   E9   POSTED    REVERSAL of E7 on ACC-001, booked D6, value D2
+   E10  REJECTED  CREDIT ACC-002 10.000 BHD as 3 equal instalments, booked D5, value D5
+-- Closing ledger balance (value date <= D6, as known at this close)
+   ACC-001  AED       465.96   (465.00 before interest capitalization)
+   ACC-002  BHD        0.000
+-- Value-dated view at this close (* = differs from what that day's own close reported)
+   ACC-001  D1 250.00  D2 225.00*  D3 625.00*  D4 415.00*  D5 390.00*  D6 465.96
+   ACC-002  D1 0.000  D2 0.000  D3 0.000  D4 0.000  D5 0.000  D6 0.000
+-- Fee assessments booked today
+   ACC-001  FEE_REFUND    +25.00 value D6  refunds the D2 fee #9, which no longer applies (cause E9) #13
+   ACC-001  FEE_REFUND    +25.00 value D6  refunds the D4 fee #10, which no longer applies (cause E9) #14
+   ACC-001  FEE_REFUND    +25.00 value D6  refunds the D5 fee #11, which no longer applies (cause E9) #15
+-- Authorization states at end of day
+   Auth-A  ACC-001  hold 200.00  SETTLED on D4: 185.00 captured, 15.00 released
+   Auth-B  ACC-001  asked 90.00  DECLINED on D5, no hold
+-- Errors
+   E10 REJECTED, nothing posted: CREDIT ACC-002 10.000 BHD as 3 equal instalments, booked D5, value D5
+        - BOOKED_DAY_CLOSED: booked on D5, but D5 is already closed (the business day is D6); a closed day cannot take new bookings
+        - UNEQUAL_INSTALMENTS: BHD 10.000 cannot be split into 3 equal instalments at 3 decimal places: 10.000 / 3 = 3.3333333..., and the nearest representable parts (3.334 + 3.333 + 3.333) are not equal
+
+==================== End of window ====================
+-- Interest: one accrual per day, derived at the Day 6 close from the final value-dated closes
+   rate 0.0004 per day (0.04%), positive balances only, each day rounded HALF_EVEN to the currency's scale
+   ACC-001  D1 250.00 -> 0.10  D2 225.00 -> 0.09  D3 625.00 -> 0.25  D4 415.00 -> 0.17  D5 390.00 -> 0.16  D6 465.00 -> 0.19
+   ACC-001  sum of rounded accruals 0.96 = capitalized 0.96 (one credit, value D6)
+   ACC-002  D1 0.000 -> 0.000  D2 0.000 -> 0.000  D3 0.000 -> 0.000  D4 0.000 -> 0.000  D5 0.000 -> 0.000  D6 0.000 -> 0.000
+   ACC-002  sum of rounded accruals 0.000 = capitalized 0.000 (nothing to capitalize, no entry posted)
+-- Final value-dated closing balances (everything known at the end)
+   ACC-001  D1 250.00  D2 225.00  D3 625.00  D4 415.00  D5 390.00  D6 465.96   (D6 includes interest)
+   ACC-002  D1 0.000  D2 0.000  D3 0.000  D4 0.000  D5 0.000  D6 0.000   (D6 includes interest)
+-- Event outcomes
+   E1   POSTED    processed D1  CREDIT ACC-001 1200.00 AED, booked D1, value D1
+   E2   POSTED    processed D1  DEBIT ACC-001 950.00 AED, booked D1, value D1
+   E3   APPROVED  processed D2  AUTHORIZATION Auth-A ACC-001 hold 200.00 AED, booked D2, value D2
+   E4   POSTED    processed D3  CREDIT ACC-001 400.00 AED, booked D3, value D3
+   E5   POSTED    processed D4  SETTLEMENT Auth-A ACC-001 185.00 AED, booked D4, value D4
+   E6   REJECTED  processed D4  SETTLEMENT Auth-Z ACC-001 180.00 AED, booked D4, value D4
+   E7   POSTED    processed D5  DEBIT ACC-001 620.00 AED, booked D5, value D2
+   E8   DECLINED  processed D5  AUTHORIZATION Auth-B ACC-001 hold 90.00 AED, booked D5, value D5
+   E9   POSTED    processed D6  REVERSAL of E7 on ACC-001, booked D6, value D2
+   E10  REJECTED  processed D6  CREDIT ACC-002 10.000 BHD as 3 equal instalments, booked D5, value D5
+-- Journal (append order; memo entries do not move the ledger balance)
+   #1   CREDIT                   ACC-001 booked D1 value D1    1200.00  cause E1
+   #2   DEBIT                    ACC-001 booked D1 value D1    -950.00  cause E2
+   #3   HOLD_PLACED (memo)       ACC-001 booked D2 value D2     200.00  cause E3  ref Auth-A
+   #4   CREDIT                   ACC-001 booked D3 value D3     400.00  cause E4
+   #5   SETTLEMENT               ACC-001 booked D4 value D4    -185.00  cause E5  ref Auth-A
+   #6   HOLD_SETTLED (memo)      ACC-001 booked D4 value D4     185.00  cause E5  ref Auth-A
+   #7   HOLD_RELEASED (memo)     ACC-001 booked D4 value D4      15.00  cause E5  ref Auth-A
+   #8   DEBIT                    ACC-001 booked D5 value D2    -620.00  cause E7
+   #9   OVERDRAFT_FEE            ACC-001 booked D5 value D2     -25.00  cause E7
+   #10  OVERDRAFT_FEE            ACC-001 booked D5 value D4     -25.00  cause E7
+   #11  OVERDRAFT_FEE            ACC-001 booked D5 value D5     -25.00  cause close D5
+   #12  REVERSAL                 ACC-001 booked D6 value D2     620.00  cause E9  ref E7
+   #13  FEE_REFUND               ACC-001 booked D6 value D6      25.00  cause E9  ref 9
+   #14  FEE_REFUND               ACC-001 booked D6 value D6      25.00  cause E9  ref 10
+   #15  FEE_REFUND               ACC-001 booked D6 value D6      25.00  cause E9  ref 11
+   #16  INTEREST_CAPITALIZATION  ACC-001 booked D6 value D6       0.96  cause close D6
+-- Invariants
+   ok    journal only grows; no entry changed  (6 close snapshots are unchanged prefixes of the final 16 entries)
+   ok    entry sequences are 1..n with no gaps  (1..16)
+   ok    ACC-001: opening + all entries = final balance  (0.00 + entries = 465.96; final = 465.96)
+   ok    ACC-001: rounded daily accruals sum exactly to capitalized total  (accruals 0.96, capitalized 0.96)
+   ok    ACC-001: at most one fee per day  (3 fee(s) assessed, 3 refunded)
+   ok    ACC-001: standing fees match the rule  (standing [], required [])
+   ok    ACC-001: every amount in AED at scale 2  (29 amounts checked)
+   ok    ACC-002: opening + all entries = final balance  (0.000 + entries = 0.000; final = 0.000)
+   ok    ACC-002: rounded daily accruals sum exactly to capitalized total  (accruals 0.000, capitalized 0.000)
+   ok    ACC-002: at most one fee per day  (0 fee(s) assessed, 0 refunded)
+   ok    ACC-002: standing fees match the rule  (no fee defined in BHD)
+   ok    ACC-002: every amount in BHD at scale 3  (13 amounts checked)
+   ok    rejected and declined events post nothing
+   ok    every closed hold is fully settled or released
